@@ -1,0 +1,115 @@
+import { useState, type FormEvent } from 'react'
+
+interface Props {
+  inicial?: { nombre: string; emoji: string }
+  onGuardar: (nombre: string, emoji: string) => Promise<void>
+  onCerrar: () => void
+}
+
+const EMOJIS_SUGERIDOS = ['📁', '📝', '💡', '⭐', '🎯', '🔖', '🛠️', '💼', '🎮', '🏃', '🍎', '💰', '📚', '🌍', '🎨']
+
+export default function ModalTema({ inicial, onGuardar, onCerrar }: Props) {
+  const [nombre, setNombre] = useState(inicial?.nombre ?? '')
+  const [emoji, setEmoji] = useState(inicial?.emoji ?? '📁')
+  const [guardando, setGuardando] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault()
+    if (!nombre.trim()) return
+    setError(null)
+    setGuardando(true)
+    try {
+      await onGuardar(nombre.trim(), emoji)
+      onCerrar()
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : typeof err === 'object' && err !== null && 'message' in err
+            ? String((err as { message: unknown }).message)
+            : JSON.stringify(err)
+      setError(msg)
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={(e) => e.target === e.currentTarget && onCerrar()}
+    >
+      <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
+        <h2 className="text-base font-semibold text-slate-900 dark:text-white mb-4">
+          {inicial ? 'Editar temática' : 'Nueva temática'}
+        </h2>
+
+        <form onSubmit={onSubmit} className="space-y-4">
+          {/* Emoji grande + picker rápido */}
+          <div>
+            <div className="text-4xl text-center mb-2">{emoji}</div>
+            <div className="flex flex-wrap gap-1 justify-center">
+              {EMOJIS_SUGERIDOS.map((e) => (
+                <button
+                  key={e}
+                  type="button"
+                  onClick={() => setEmoji(e)}
+                  className={`text-xl w-9 h-9 rounded-lg transition ${
+                    emoji === e
+                      ? 'bg-indigo-100 dark:bg-indigo-900/50 ring-2 ring-indigo-400'
+                      : 'hover:bg-slate-100 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
+            <input
+              type="text"
+              value={emoji}
+              onChange={(e) => setEmoji(e.target.value)}
+              maxLength={2}
+              placeholder="O pega tu emoji"
+              className="mt-2 w-full text-center text-sm rounded-lg border border-slate-200 dark:border-slate-600 bg-transparent px-3 py-1.5 outline-none focus:border-indigo-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Nombre
+            </label>
+            <input
+              type="text"
+              required
+              autoFocus
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              placeholder="Ej: Trabajo, Ideas, Dieta…"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-indigo-400"
+            />
+          </div>
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
+          <div className="flex gap-2 justify-end">
+            <button
+              type="button"
+              onClick={onCerrar}
+              className="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={guardando || !nombre.trim()}
+              className="px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition"
+            >
+              {guardando ? 'Guardando…' : 'Guardar'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
