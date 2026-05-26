@@ -38,7 +38,7 @@ export default function Notas() {
       />
 
       {/* Área principal de notas */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={`flex-1 flex-col overflow-hidden ${temaActualId ? 'flex' : 'hidden md:flex'}`}>
         {!temaActualId ? (
           <div className="flex-1 flex items-center justify-center p-8 text-center">
             <div className="max-w-xs">
@@ -56,6 +56,13 @@ export default function Notas() {
             {/* Cabecera del área de notas */}
             <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shrink-0">
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleSeleccionarTema('')}
+                  className="md:hidden mr-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg"
+                >
+                  ←
+                </button>
                 <span className="text-xl">{temaActual?.emoji ?? '📁'}</span>
                 <h2 className="font-semibold text-slate-900 dark:text-white">
                   {temaActual?.nombre}

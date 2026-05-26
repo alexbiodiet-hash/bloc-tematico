@@ -29,7 +29,7 @@ export default function Numeros() {
   return (
     <div className="flex h-full -m-4">
       {/* Panel izquierdo: lista de conceptos */}
-      <aside className="flex w-56 shrink-0 flex-col border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 h-full overflow-y-auto">
+      <aside className={`shrink-0 flex-col border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 h-full overflow-y-auto ${conceptoActualId ? 'hidden md:flex md:w-56' : 'flex w-full md:w-56'}`}>
         <div className="p-3 border-b border-slate-200 dark:border-slate-700">
           <button
             onClick={() => setModal({ abierto: true, editando: null })}
@@ -81,7 +81,7 @@ export default function Numeros() {
       </aside>
 
       {/* Panel derecho: detalle del concepto */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={`flex-1 flex-col overflow-hidden ${conceptoActualId ? 'flex' : 'hidden md:flex'}`}>
         {!conceptoActualId ? (
           <div className="flex-1 flex items-center justify-center p-8 text-center">
             <div className="max-w-xs">
@@ -98,6 +98,13 @@ export default function Numeros() {
           <div className="flex-1 overflow-y-auto p-5 space-y-5">
             {/* Cabecera */}
             <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setConceptoActualId(null)}
+                className="md:hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg"
+              >
+                ←
+              </button>
               <span className="text-3xl">{conceptoActual?.emoji ?? '📊'}</span>
               <div>
                 <h2 className="font-bold text-xl text-slate-900 dark:text-white">

@@ -39,7 +39,7 @@ export default function PanelTemas({
 
   return (
     <>
-      <aside className="flex w-56 shrink-0 flex-col border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 h-full overflow-y-auto">
+      <aside className={`shrink-0 flex-col border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 h-full overflow-y-auto ${temaActualId ? 'hidden md:flex md:w-56' : 'flex w-full md:w-56'}`}>
         <div className="p-3 border-b border-slate-200 dark:border-slate-700">
           <button
             onClick={() => {
