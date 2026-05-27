@@ -1,19 +1,20 @@
 import { useState, type FormEvent } from 'react'
 
 interface Props {
-  inicial?: { nombre: string; unidad: string; emoji: string }
-  onGuardar: (nombre: string, unidad: string, emoji: string) => Promise<void>
+  inicial?: { nombre: string; unidad: string; emoji: string; notaDefecto: string }
+  onGuardar: (nombre: string, unidad: string, emoji: string, notaDefecto: string) => Promise<void>
   onCerrar: () => void
 }
 
 const EMOJIS = ['📊', '💰', '⚖️', '🏃', '🍎', '💊', '📚', '⏱️', '🌡️', '💧', '🛒', '🎯']
 
 export default function ModalConcepto({ inicial, onGuardar, onCerrar }: Props) {
-  const [nombre, setNombre] = useState(inicial?.nombre ?? '')
-  const [unidad, setUnidad] = useState(inicial?.unidad ?? '')
-  const [emoji, setEmoji] = useState(inicial?.emoji ?? '📊')
-  const [guardando, setGuardando] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [nombre,      setNombre]      = useState(inicial?.nombre      ?? '')
+  const [unidad,      setUnidad]      = useState(inicial?.unidad      ?? '')
+  const [emoji,       setEmoji]       = useState(inicial?.emoji       ?? '📊')
+  const [notaDefecto, setNotaDefecto] = useState(inicial?.notaDefecto ?? '')
+  const [guardando,   setGuardando]   = useState(false)
+  const [error,       setError]       = useState<string | null>(null)
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault()
@@ -21,12 +22,11 @@ export default function ModalConcepto({ inicial, onGuardar, onCerrar }: Props) {
     setError(null)
     setGuardando(true)
     try {
-      await onGuardar(nombre.trim(), unidad.trim(), emoji)
+      await onGuardar(nombre.trim(), unidad.trim(), emoji, notaDefecto.trim())
       onCerrar()
     } catch (err) {
       const msg =
-        err instanceof Error
-          ? err.message
+        err instanceof Error ? err.message
           : typeof err === 'object' && err !== null && 'message' in err
             ? String((err as { message: unknown }).message)
             : JSON.stringify(err)
@@ -41,12 +41,13 @@ export default function ModalConcepto({ inicial, onGuardar, onCerrar }: Props) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       onClick={(e) => e.target === e.currentTarget && onCerrar()}
     >
-      <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
+      <div className="animate-modal-in w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
         <h2 className="text-base font-semibold text-slate-900 dark:text-white mb-4">
           {inicial ? 'Editar concepto' : 'Nuevo concepto'}
         </h2>
 
         <form onSubmit={onSubmit} className="space-y-4">
+          {/* Emoji */}
           <div>
             <div className="text-4xl text-center mb-2">{emoji}</div>
             <div className="flex flex-wrap gap-1 justify-center mb-2">
@@ -75,6 +76,7 @@ export default function ModalConcepto({ inicial, onGuardar, onCerrar }: Props) {
             />
           </div>
 
+          {/* Nombre */}
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Nombre
@@ -90,6 +92,7 @@ export default function ModalConcepto({ inicial, onGuardar, onCerrar }: Props) {
             />
           </div>
 
+          {/* Unidad */}
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Unidad <span className="font-normal text-slate-400">(opcional)</span>
@@ -99,6 +102,21 @@ export default function ModalConcepto({ inicial, onGuardar, onCerrar }: Props) {
               value={unidad}
               onChange={(e) => setUnidad(e.target.value)}
               placeholder="€, h, km, veces…"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+            />
+          </div>
+
+          {/* Nota fija */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Nota fija{' '}
+              <span className="font-normal text-slate-400">(se rellena sola en cada registro)</span>
+            </label>
+            <input
+              type="text"
+              value={notaDefecto}
+              onChange={(e) => setNotaDefecto(e.target.value)}
+              placeholder="Ej: El dinero que tengo materializado…"
               className="w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm outline-none focus:border-indigo-400"
             />
           </div>

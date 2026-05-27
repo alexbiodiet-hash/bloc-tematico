@@ -40,7 +40,7 @@ export default function ModalTema({ inicial, onGuardar, onCerrar }: Props) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       onClick={(e) => e.target === e.currentTarget && onCerrar()}
     >
-      <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
+      <div className="animate-modal-in w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
         <h2 className="text-base font-semibold text-slate-900 dark:text-white mb-4">
           {inicial ? 'Editar temática' : 'Nueva temática'}
         </h2>

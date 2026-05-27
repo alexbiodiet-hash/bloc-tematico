@@ -6,6 +6,7 @@ export interface Concepto {
   nombre: string
   unidad: string | null
   emoji: string | null
+  nota_defecto: string | null
   created_at: string
 }
 
@@ -62,7 +63,7 @@ export function useConceptos() {
   )
 
   const actualizar = useCallback(
-    async (id: string, cambios: Partial<Pick<Concepto, 'nombre' | 'unidad' | 'emoji'>>) => {
+    async (id: string, cambios: Partial<Pick<Concepto, 'nombre' | 'unidad' | 'emoji' | 'nota_defecto'>>) => {
       const { error } = await supabase.from('conceptos').update(cambios).eq('id', id)
       if (error) throw error
     },

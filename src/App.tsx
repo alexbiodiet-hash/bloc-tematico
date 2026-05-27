@@ -1,10 +1,12 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { ToastProvider } from './contexts/ToastContext'
 import Login from './components/Login'
 import Layout from './components/Layout'
 import Notas from './pages/Notas'
 import Numeros from './pages/Numeros'
 import Alarmas from './pages/Alarmas'
+import CheckIn from './pages/CheckIn'
 
 function Rutas() {
   const { session, cargando } = useAuth()
@@ -32,6 +34,7 @@ function Rutas() {
           path="/alarmas"
           element={<Alarmas />}
         />
+        <Route path="/checkin" element={<CheckIn />} />
         <Route path="*" element={<Navigate to="/notas" replace />} />
       </Route>
     </Routes>
@@ -41,9 +44,11 @@ function Rutas() {
 export default function App() {
   return (
     <AuthProvider>
-      <HashRouter>
-        <Rutas />
-      </HashRouter>
+      <ToastProvider>
+        <HashRouter>
+          <Rutas />
+        </HashRouter>
+      </ToastProvider>
     </AuthProvider>
   )
 }

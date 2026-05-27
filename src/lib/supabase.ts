@@ -7,4 +7,11 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? 'eyJhbGciOiJIUzI1NiIsI
 
 export const supabaseConfigurado = true
 
-export const supabase = createClient(url, anonKey)
+export const supabase = createClient(url, anonKey, {
+  auth: {
+    persistSession:   true,
+    autoRefreshToken: true,
+    storageKey:       'bloc-tematico-auth',
+    detectSessionInUrl: true,
+  },
+})

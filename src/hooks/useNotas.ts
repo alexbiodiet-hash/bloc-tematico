@@ -6,6 +6,7 @@ export interface Nota {
   tema_id: string
   titulo: string | null
   contenido: string
+  puntuacion: number | null
   orden: number
   created_at: string
   updated_at: string
@@ -71,7 +72,7 @@ export function useNotas(temaId: string | null) {
   }, [])
 
   const actualizar = useCallback(
-    async (id: string, cambios: Partial<Pick<Nota, 'titulo' | 'contenido'>>) => {
+    async (id: string, cambios: Partial<Pick<Nota, 'titulo' | 'contenido' | 'puntuacion'>>) => {
       const { error } = await supabase
         .from('notas')
         .update({ ...cambios, updated_at: new Date().toISOString() })
