@@ -8,12 +8,13 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "npm run build && wrangler dev",
     "pwa:icons": "node scripts/gen-icons.mjs",
     "electron:dev": "concurrently -k -n VITE,ELECTRON -c cyan,yellow \"vite --port 5273\" \"wait-on http://localhost:5273 && cross-env NODE_ENV=development electron .\"",
     "electron:compile": "tsc -p tsconfig.electron.json",
     "electron:pack": "npm run build && npm run electron:compile && electron-builder --dir",
-    "electron:dist": "npm run build && npm run electron:compile && electron-builder"
+    "electron:dist": "npm run build && npm run electron:compile && electron-builder",
+    "deploy": "npm run build && wrangler deploy"
   },
   "build": {
     "appId": "com.alejandro.bloctematico",
@@ -50,6 +51,7 @@
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.42.1",
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.12.3",
     "@types/react": "^19.2.14",
@@ -68,6 +70,7 @@
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.12",
     "vite-plugin-pwa": "^1.3.0",
-    "wait-on": "^9.0.10"
+    "wait-on": "^9.0.10",
+    "wrangler": "^4.103.0"
   }
 }
