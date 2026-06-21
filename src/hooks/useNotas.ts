@@ -29,6 +29,7 @@ export function useNotas(temaId: string | null) {
     }
     setCargando(true)
 
+    const timer = setTimeout(() => setCargando(false), 6000)
     supabase
       .from('notas')
       .select('*')
@@ -36,7 +37,12 @@ export function useNotas(temaId: string | null) {
       .order('orden')
       .order('created_at')
       .then(({ data }) => {
+        clearTimeout(timer)
         if (data) setNotas(data as Nota[])
+        setCargando(false)
+      })
+      .catch(() => {
+        clearTimeout(timer)
         setCargando(false)
       })
 

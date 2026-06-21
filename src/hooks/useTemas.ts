@@ -21,13 +21,21 @@ export function useTemas() {
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
+    // Timeout: si tardan >6s, deja de cargar igualmente
+    const timer = setTimeout(() => setCargando(false), 6000)
+
     supabase
       .from('temas')
       .select('*')
       .order('orden')
       .order('created_at')
       .then(({ data }) => {
+        clearTimeout(timer)
         if (data) setTemas(data as Tema[])
+        setCargando(false)
+      })
+      .catch(() => {
+        clearTimeout(timer)
         setCargando(false)
       })
 

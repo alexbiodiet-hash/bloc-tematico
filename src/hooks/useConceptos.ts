@@ -21,12 +21,18 @@ export function useConceptos() {
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
+    const timer = setTimeout(() => setCargando(false), 6000)
     supabase
       .from('conceptos')
       .select('*')
       .order('created_at')
       .then(({ data }) => {
+        clearTimeout(timer)
         if (data) setConceptos(data as Concepto[])
+        setCargando(false)
+      })
+      .catch(() => {
+        clearTimeout(timer)
         setCargando(false)
       })
 
