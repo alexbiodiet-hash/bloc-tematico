@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import JSZip from 'jszip'
 import { useTemas } from '../hooks/useTemas'
 import { useNotas } from '../hooks/useNotas'
 import { useToast } from '../contexts/ToastContext'
@@ -46,6 +47,32 @@ export default function Notas() {
     setNuevaNotaId(null)
   }
 
+  async function handleDescargar() {
+    if (!temaActual || notas.length === 0) {
+      toast.info('No hay notas para descargar')
+      return
+    }
+
+    const zip = new JSZip()
+    const carpeta = zip.folder(temaActual.nombre) as JSZip
+
+    notas.forEach((nota, i) => {
+      const titulo = nota.titulo || `Nota ${i + 1}`
+      const contenido = nota.contenido || ''
+      carpeta.file(`${i + 1}. ${titulo}.md`, contenido)
+    })
+
+    const blob = await zip.generateAsync({ type: 'blob' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${temaActual.nombre}.zip`
+    a.click()
+    URL.revokeObjectURL(url)
+
+    toast.exito(`Descargado: ${temaActual.nombre}`)
+  }
+
   return (
     <div className="flex h-full -m-4">
       <PanelTemas
@@ -87,13 +114,24 @@ export default function Notas() {
                   {notas.length} {notas.length === 1 ? 'nota' : 'notas'}
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={handleCrearNota}
-                className="text-sm px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition font-medium"
-              >
-                ＋ Nueva nota
-              </button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleDescargar}
+                  disabled={notas.length === 0}
+                  title="Descargar como ZIP"
+                  className="text-sm px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition disabled:opacity-40"
+                >
+                  ⬇️ Descargar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCrearNota}
+                  className="text-sm px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition font-medium"
+                >
+                  ＋ Nueva nota
+                </button>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-5 space-y-4">

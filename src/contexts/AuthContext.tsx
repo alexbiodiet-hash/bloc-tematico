@@ -21,10 +21,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session)
-      setCargando(false)
-    })
+    // Timeout de seguridad: si getSession tarda más de 6s, muestra login igualmente
+    const timer = setTimeout(() => setCargando(false), 6000)
+
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        clearTimeout(timer)
+        setSession(data.session)
+        setCargando(false)
+      })
+      .catch(() => {
+        clearTimeout(timer)
+        setCargando(false)
+      })
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, ses) => {
       setSession(ses)
